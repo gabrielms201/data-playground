@@ -57,7 +57,7 @@ class Graphic:
     def __init__(self, data):
         self.__data = data
     
-    def viewGraphicData(self, x, y, shoudPlot = False, scatterColor = "blue", scatterSize = 5, linewidth = 1, plotColor = "red"):
+    def viewGraphicData(self, x, y, shoudPlot = False, scatterColor = "red", scatterSize = 10, linewidth = 1, plotColor = "blue"):
         xContent = x.getContent()
         yContent = y.getContent()
 
@@ -83,9 +83,9 @@ class Graphic:
 def main():
     # Metrics -> Idea: Use xml to define these metrics
     time = Metric("Time (HH:MM)", "Date", 0)
-    freeRam = Metric("Ram Free (MB)", "Numeric", 1)
+    freeRam = Metric("Free RAM (MB)", "Numeric", 1)
     cpu = Metric("Cpu Usage (%)", "Numeric", 24)
-    commitedRam = Metric("RAM Commited (%)", "Numeric", 25)
+    commitedRam = Metric("Commited RAM(%)", "Numeric", 25)
     metrics = [time, freeRam, cpu, commitedRam]
     # DataBase -> Idea: Use xml to define .tsv path and filename
     dataBase = DataBase(metrics)
@@ -94,5 +94,5 @@ def main():
     dataBase.fillMetrics()
     # Graphi -> Idea: Use xml or a gui to define what metrics should view (i think it'be better a gui)
     graphic = Graphic(dataBase)
-    graphic.viewGraphicData(time, freeRam, shoudPlot = True, scatterColor = "red", scatterSize = 10, linewidth = 1, plotColor = "blue")
+    graphic.viewGraphicData(time, freeRam, shoudPlot = True)
 main()
