@@ -20,7 +20,8 @@ class Metric():
         elif self.type == "DATE":
             time = data[line][self.column].replace('"', "")
             dateFormat = "%m/%d/%Y %H:%M"
-            if len(time) <= 16:
+            commonDateSize = len("mm/dd/YYYY HH:MM") # Perfmon can also generate like this: [mm/dd/YYYY HH:MM:SS.fff]
+            if len(time) <= commonDateSize:
                 return self.__content.append(dt.datetime.strptime(time, dateFormat))
             else:
                 return self.__content.append(dt.datetime.strptime(time, dateFormat + ":%S.%f"))
@@ -67,7 +68,7 @@ class Graphic:
         ax.xaxis.set_major_formatter(md.DateFormatter("%H:%M"))
         plt.xticks(rotation = 90, size = 8)
         plt.locator_params(axis="x", nbins=(len(xContent)/3))
-        plt.locator_params(axis="y", nbins=(len(yContent)/10))
+        #plt.locator_params(axis="y", nbins=(len(yContent)))
 
         plt.scatter(xContent, yContent, color = scatterColor, s = scatterSize)
         if shoudPlot: 
@@ -85,8 +86,8 @@ def main():
     time = Metric("Time (HH:MM)", "Date", 0)
     freeRam = Metric("Free RAM (MB)", "Numeric", 1)
     cpu = Metric("Cpu Usage (%)", "Numeric", 24)
-    commitedRam = Metric("Commited RAM(%)", "Numeric", 25)
-    metrics = [time, freeRam, cpu, commitedRam]
+    committedRam = Metric("Commited RAM(%)", "Numeric", 25)
+    metrics = [time, freeRam, cpu, committedRam]
     # DataBase -> Idea: Use xml to define .tsv path and filename
     dataBase = DataBase(metrics)
     file = "collector-input/data-10-09.tsv"
@@ -94,5 +95,5 @@ def main():
     dataBase.fillMetrics()
     # Graphi -> Idea: Use xml or a gui to define what metrics should view (i think it'be better a gui)
     graphic = Graphic(dataBase)
-    graphic.viewGraphicData(time, freeRam, shoudPlot = True)
+    graphic.viewGraphicData(time, committedRam, shoudPlot = True)
 main()
