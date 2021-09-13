@@ -8,5 +8,5 @@ improve it.
 
 ###### **What you gonna need to run the code:**
 - Matplotlib
-- Numpy
+- Numpy (todo)
 
