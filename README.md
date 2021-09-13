@@ -8,7 +8,7 @@ improve it.
 
 ###### **What you gonna need to run the code:**
 - Matplotlib
-- Numpy (todo)
+- Numpy (to do)
 
 ###### **To do:**
 - Learn how to consume XML config file
