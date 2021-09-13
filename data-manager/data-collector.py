@@ -39,33 +39,33 @@ class DataBase():
         for metric in self.__metrics:
             for line in range(1, len(self.__data)):
                 metric.setContent(self.__data, line)
-
-def main():
-    def ramViewer():
-        mpl.rcParams["figure.dpi"] = 150
-        # Metrics
-        time = Metric("Date", 0)
-        free = Metric("Numeric", 1)
-        cpu = Metric("Numeric", -2)
-        commited = Metric("Numeric", -1)
-        # Db
-        dataBaseMetrics = [time, free, cpu, commited]
-        dataBase = DataBase(dataBaseMetrics)
-        dataBase.setData("collector-input/Data.tsv")
-        dataBase.fillMetrics()
-
-        # Mb Graphic
-        time = time.getContent()
-        freeMb = free.getContent()
-        del freeMb[89:] ; del time[89:]
+    def viewDataGraphic(self, x, y):
+        xContent = x.getContent()
+        yContent = y.getContent()
+        # del yContent[89:] ; del xContent[89:]
 
         ax=plt.gca()
-        ax.set_xticks(time)
+        ax.set_xticks(xContent)
+        mpl.rcParams["figure.dpi"] = 150
         ax.xaxis.set_major_formatter(md.DateFormatter("%H:%M"))
         plt.xticks(rotation=90)
 
-        plt.scatter(time, freeMb, s = 5)
+        plt.scatter(xContent, yContent, s = 5)
         plt.show()
-    ramViewer()
 
+
+
+def main():
+    # Metrics
+    time = Metric("Date", 0)
+    free = Metric("Numeric", 1)
+    cpu = Metric("Numeric", -2)
+    commited = Metric("Numeric", -1)
+    # DataBase
+    dataBaseMetrics = [time, free, cpu, commited]
+    dataBase = DataBase(dataBaseMetrics)
+    dataBase.setData("collector-input/Data.tsv")
+    dataBase.fillMetrics()
+
+    dataBase.viewDataGraphic(time, free)
 main()
