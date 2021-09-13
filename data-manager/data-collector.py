@@ -4,24 +4,32 @@ import matplotlib.dates as md
 import matplotlib.pyplot as plt
 import numpy as np
 
-
+# Metric Class
 class Metric():
-    def __init__(self, type, column):
+    def __init__(self, name, type, column):
         self.type = type.upper()
         self.column = column
+        self.__name = name
         self.__content = []
+    
     # Content getter && setter
     def setContent(self, data, line):
         if self.type == "NUMERIC":
-            return self.__content.append( float (data[line][self.column].replace(",", ".").replace(" ", "0")) )
+            data = data[line][self.column].replace(",", ".").replace(" ", "0")
+            return self.__content.append(float(data))
         elif self.type == "DATE":
             time = data[line][self.column]
             return self.__content.append(dt.datetime.strptime(time, "%d/%m/%Y %H:%M"))
     def getContent(self):
         return self.__content
+    # Name getter
+    def getName(self):
+        return self.__name
+
 class DataBase():
     def __init__(self, metrics):
         self.__metrics = metrics
+
     # Data getter && setter
     def setData(self, filename):
         file = open(filename, "r", encoding="UTF-8")
@@ -32,17 +40,21 @@ class DataBase():
     def getData(self):
         return self.__data
     # Metrics getter
-    def getMetrics(self, metrics):
+    def getMetrics(self):
         return self.__metrics
     # Custom methods
-    def fillMetrics(self):
+    def fillMetrics(self): # Idea: Try to reduce the complexity of this algorithm
         for metric in self.__metrics:
             for line in range(1, len(self.__data)):
                 metric.setContent(self.__data, line)
-    def viewDataGraphic(self, x, y):
+
+class Graphic:
+    def __init__(self, data):
+        self.__data = data
+    
+    def viewGraphicData(self, x, y, shoudPlot = False, scatterColor = "blue", scatterSize = 5, linewidth = 2, plotColor = "red"):
         xContent = x.getContent()
         yContent = y.getContent()
-        # del yContent[89:] ; del xContent[89:]
 
         ax=plt.gca()
         ax.set_xticks(xContent)
@@ -50,22 +62,27 @@ class DataBase():
         ax.xaxis.set_major_formatter(md.DateFormatter("%H:%M"))
         plt.xticks(rotation=90)
 
-        plt.scatter(xContent, yContent, s = 5)
+        plt.scatter(xContent, yContent, color = scatterColor, s = scatterSize)
+        if shoudPlot: 
+            plt.plot(xContent, yContent, color = plotColor, linewidth = linewidth)
+        
+        # Labels && Legends
+        plt.ylabel(y.getName())
+        plt.xlabel(x.getName())
         plt.show()
 
-
-
 def main():
-    # Metrics
-    time = Metric("Date", 0)
-    free = Metric("Numeric", 1)
-    cpu = Metric("Numeric", -2)
-    commited = Metric("Numeric", -1)
-    # DataBase
-    dataBaseMetrics = [time, free, cpu, commited]
-    dataBase = DataBase(dataBaseMetrics)
+    # Metrics -> Idea: Use xml to define these metrics
+    time = Metric("Time (HH:MM)", "Date", 0)
+    freeRam = Metric("Ram Free (MB)", "Numeric", 1)
+    cpu = Metric("Cpu Usage (%)", "Numeric", 24)
+    commited = Metric("RAM Commited (%)", "Numeric", 25)
+    metrics = [time, freeRam, cpu, commited]
+    # DataBase -> Idea: Use xml to define .tsv path
+    dataBase = DataBase(metrics)
     dataBase.setData("collector-input/Data.tsv")
     dataBase.fillMetrics()
-
-    dataBase.viewDataGraphic(time, free)
+    # Graphi -> Idea: Use xml or a gui to define what metrics should view (i think it'be better a gui)
+    graphic = Graphic(dataBase)
+    graphic.viewGraphicData(time, cpu, shoudPlot = True, scatterColor = "red", scatterSize = 10, linewidth = 2, plotColor = "blue")
 main()
