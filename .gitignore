@@ -1,5 +1,6 @@
 # TSV Files
 *.tsv
+*dataOutput.txt
 
 # Vscode Ignore
 .vscode/*
