@@ -10,7 +10,3 @@ improve it.
 - Matplotlib
 - Numpy (to do)
 
-###### **To do:**
-- Learn how to consume XML config file
-- Create a gui *(maybe?)*
-- Create an output file for the filtred data
